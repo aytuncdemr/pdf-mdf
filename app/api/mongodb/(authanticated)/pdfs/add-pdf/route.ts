@@ -31,6 +31,7 @@ export async function POST(request: Request) {
         const pdfBuffer = Buffer.from(body.file.split(",")[1], "base64");
 
         body.file = new Binary(pdfBuffer);
+        delete body.token;
         pdfs.insertOne(body);
 
         return new Response(
