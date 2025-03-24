@@ -1,8 +1,7 @@
 "use client";
 
 import { RaportElement } from "@/interfaces/RaportElement";
-import { removeTurkishChars } from "@/utils/removeTurkishCharacters";
-import _, { remove } from "lodash";
+import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 

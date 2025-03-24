@@ -17,8 +17,7 @@ export default function Navigation() {
                             pathName === "/pdfs" && "text-gray-400"
                         } hover:text-gray-400 duration-150`}
                         href={"/pdfs"}
-                    >
-                        PDF'leri görüntüle
+                    >PDF&apos;leri görüntüle
                     </Link>
                 </li>
                 <li>
