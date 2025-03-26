@@ -59,6 +59,7 @@ export default function generateRaportElements(html: string) {
                         ?.textContent
                 ) || "*",
             isTrendyol: true,
+            size: 0,
         };
         raportElements.push(raportElement);
     });
@@ -118,6 +119,7 @@ export default function generateRaportElements(html: string) {
                     )[0]?.textContent
                 ) || "*",
             isTrendyol: false,
+            size: 0,
         };
         raportElements.push(raportElement);
     });
