@@ -15,7 +15,7 @@ export default function SearchQuery({
         "
         >
             <input
-                className="text-lg border  lg:py-2 lg:px-2 max-w-[%25] w-[29rem] border-gray-500 rounded-md  outline-none"
+                className="text-lg border  lg:py-2 lg:px-2 w-full px-4 py-2 lg:max-w-[29rem] lg:w-[29rem] border-gray-500 rounded-md  outline-none"
                 placeholder={`Arama yap (${length} dosya)`}
                 type="text"
                 value={query || ""}
