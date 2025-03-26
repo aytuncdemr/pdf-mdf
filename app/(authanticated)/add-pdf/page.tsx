@@ -8,6 +8,9 @@ import axios, { isAxiosError } from "axios";
 import { useContext, useEffect, useState } from "react";
 
 export default function AddPDFPage() {
+    const [isGettingRaports,setIsGettingRaports] = useState(false);
+    const [isGettingLiveRaports,setIsGettingLiveRaports] = useState(false);
+
     const [html, setHTML] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [raportElements, setRaportElements] = useState<
@@ -20,6 +23,7 @@ export default function AddPDFPage() {
             setError(null);
             setHTML(null);
             setRaportElements(null);
+            setIsGettingRaports(true);
             const { data } = await axios.post("/api/mongodb/generate-raports", {
                 html,
                 token: userContext?.user?.token,
@@ -32,12 +36,15 @@ export default function AddPDFPage() {
             } else if (error instanceof Error) {
                 setError(error.message);
             }
+        }finally{
+            setIsGettingRaports(false);
         }
     }
 
     async function getLiveRaports() {
         try {
             setError(null);
+            setIsGettingLiveRaports(true);
             const { data } = await axios.get("/api/mongodb/raports", {
                 headers: {
                     Authorization: `Bearer ${userContext?.user?.token}`,
@@ -52,6 +59,8 @@ export default function AddPDFPage() {
             } else if (error instanceof Error) {
                 setError(error.message);
             }
+        }finally{
+            setIsGettingLiveRaports(false);
         }
     }
 
@@ -120,6 +129,9 @@ export default function AddPDFPage() {
                         Canlı Bağlan
                     </button>
                 </div>
+                {isGettingRaports && <p className="text-xl mt-2">Raporlar hazırlanıyor...</p>}
+                {isGettingLiveRaports && <p className="text-xl mt-2">Raporlar alınıyor...</p>}
+                
                 {raportElements && raportElements.length > 0 && (
                     <div className="flex flex-col lg:flex-row items-center gap-4 mt-6">
                         <p className="text-green-500 text-xl ">
