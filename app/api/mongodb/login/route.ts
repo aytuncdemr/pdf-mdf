@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 export async function POST(request: Request) {
     const body = await request.json();
-    
+
     if (!body.userName || !body.password) {
         return new Response(
             JSON.stringify({ message: "Lütfen bütün boşlukları doldurunuz." }),
@@ -36,8 +36,13 @@ export async function POST(request: Request) {
         if (error instanceof Error) {
             return new Response(
                 JSON.stringify({
-                    message: "Bir şeyler ters gitti:" + error.message,
+                    message: error.message,
                 }),
+                { status: 500 }
+            );
+        } else {
+            return new Response(
+                JSON.stringify({ message: "Bir şeyler ters gitti" }),
                 { status: 500 }
             );
         }

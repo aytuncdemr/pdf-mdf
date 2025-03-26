@@ -9,62 +9,83 @@ import { useContext, useEffect, useState } from "react";
 
 export default function PDFSPage() {
     const [pdfDocuments, setPDFDocuments] = useState<
-        { name: string; _id: ObjectId }[] | null
+        | {
+              name: string;
+              _id: ObjectId;
+              uploadedAt: string;
+              isTrendyol: boolean;
+          }[]
+        | null
     >(null);
     const [error, setError] = useState<string | null>(null);
-
     const [query, setQuery] = useState<string | null>(null);
-
     const userContext = useContext(UserContext);
 
     useEffect(() => {
-        async function getPDFNames() {
-            const { data } = await axios.get("/api/mongodb/pdfs", {
-                headers: {
-                    Authorization: `Bearer ${userContext?.user?.token}`,
-                    "Content-Type": "application/json",
-                },
-            });
+        try {
+            async function getPDFNames() {
+                const { data } = await axios.get("/api/mongodb/pdfs", {
+                    headers: {
+                        Authorization: `Bearer ${userContext?.user?.token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
 
-            setPDFDocuments(data);
-        }
+                setPDFDocuments(data);
+            }
 
-        if (userContext?.user?.token) {
-            try {
-                getPDFNames();
-            } catch (error) {
-                if (axios.isAxiosError(error)) {
-                    setError(error.response?.data.message);
-                } else if (error instanceof Error) {
-                    setError(error.message);
-                }
+            getPDFNames();
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                setError(error.response?.data.message || error.message);
+            } else if (error instanceof Error) {
+                setError(error.message);
             }
         }
     }, [userContext?.user]);
 
     function downloadPDF(_id: string) {
-        async function downloadPDF() {
-            const { data } = await axios.get(`/api/mongodb/pdfs?id=${_id}`, {
-                headers: {
-                    Authorization: `Bearer ${userContext?.user?.token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-            const fileBuffer = Buffer.from(data.file, "base64");
-            const blob = new Blob([fileBuffer], { type: "application/pdf" });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = data.name;
-            link.click();
-            window.URL.revokeObjectURL(url);
-        }
+        try {
+            async function downloadPDF() {
+                const { data } = await axios.get(
+                    `/api/mongodb/pdfs?id=${_id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${userContext?.user?.token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+                const fileBuffer = Buffer.from(data.file, "base64");
+                const blob = new Blob([fileBuffer], {
+                    type: "application/pdf",
+                });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = data.name;
+                link.click();
+                window.URL.revokeObjectURL(url);
+            }
 
-        downloadPDF();
+            downloadPDF();
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                setError(error.response?.data.message || error.message);
+            } else if (error instanceof Error) {
+                setError(error.message);
+            }
+        }
     }
+
     return (
         <section className="pdfs-section">
-            <div className="pdfs-container grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="pdfs-container grid grid-cols-1 lg:grid-cols-4 gap-4">
+                {!pdfDocuments && !error && (
+                    <div className="text-2xl">Yükleniyor...</div>
+                )}
+                {error && <div className="text-2xl text-red-500">{error}</div>}
+
                 {pdfDocuments && (
                     <SearchQuery
                         query={query}
@@ -74,10 +95,20 @@ export default function PDFSPage() {
                 )}
                 {pdfDocuments
                     ?.filter((pdf) =>
-                        removeTurkishChars(pdf.name)
+                        removeTurkishChars(
+                            pdf.name +
+                                pdf.uploadedAt +
+                                (pdf.isTrendyol
+                                    ? "(Trendyol)"
+                                    : "(Hepsiburada)")
+                        )
+                            .trim()
                             .toLowerCase()
+
                             .includes(
-                                removeTurkishChars(query || "")?.toLowerCase()
+                                removeTurkishChars(query || "")
+                                    ?.trim()
+                                    .toLowerCase()
                             )
                     )
                     .reverse()
@@ -86,14 +117,21 @@ export default function PDFSPage() {
                             <button
                                 onClick={() => downloadPDF(pdf._id.toString())}
                                 key={pdf._id.toString()}
-                                className="text-lg border border-gray-500 rounded-lg py-2 px-4 hover:bg-gray-900 cursor-pointer duration-150"
+                                className="text-lg border border-gray-500 rounded-xl py-2 px-4 group hover:bg-gray-900 cursor-pointer duration-150"
                             >
-                                {pdf.name.replace(/\.pdf$/, "")}
+                                <span>{pdf.name.replace(/\.pdf$/, "")}</span>
+                                <br />
+                                <span className="text-gray-400 group-hover:text-gray-300 duration-150">
+                                    ({pdf.uploadedAt}) -{" "}
+                                    <span className="text-amber-500 group-hover:text-amber-400 duration-150">
+                                        {pdf.isTrendyol
+                                            ? "(Trendyol)"
+                                            : "(Hepsiburada)"}
+                                    </span>
+                                </span>
                             </button>
                         );
                     })}
-                {!pdfDocuments && <div className="text-2xl">Yükleniyor...</div>}
-                {error && <div className="text-2xl text-red-500">{error}</div>}
             </div>
         </section>
     );

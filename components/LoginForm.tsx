@@ -3,8 +3,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import login from "@/utils/login";
-import { isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import { UserContext } from "@/contexts/UserContext";
 import { useRouter } from "next/navigation";
 
@@ -13,7 +12,6 @@ export default function LoginForm() {
         userName: Yup.string().required("Kullanıcı adı gerekli"),
         password: Yup.string().required("Şifre gerekli"),
     });
-
     const [error, setError] = useState<string | null>(null);
     const userContext = useContext(UserContext);
     const router = useRouter();
@@ -23,33 +21,32 @@ export default function LoginForm() {
         password: "",
     });
 
-    // Fetch stored credentials once the component mounts (client-side)
     useEffect(() => {
-        const storedUserName = localStorage.getItem("userName") || "";
-        const storedPassword = localStorage.getItem("password") || "";
-
         setInitialValues({
-            userName: storedUserName,
-            password: storedPassword,
+            userName: localStorage.getItem("userName") || "",
+            password: localStorage.getItem("password") || "",
         });
     }, []);
 
     async function loginHandler(userName: string, password: string) {
         setError(null);
         try {
-            const { token } = await login(userName, password);
+            const {
+                data: { token },
+            } = await axios.post("/api/mongodb/login", {
+                userName,
+                password,
+            });
+
             userContext?.setUser({ token });
-            localStorage.setItem("token", token);
             localStorage.setItem("userName", userName);
             localStorage.setItem("password", password);
             router.push("/pdfs");
         } catch (error) {
             if (isAxiosError(error)) {
-                setError(error.response?.data.message);
+                setError(error.response?.data.message || error.message);
             } else if (error instanceof Error) {
                 setError(error.message);
-            } else {
-                setError("Beklenmedik bir hata oluştu");
             }
         }
     }
@@ -108,7 +105,7 @@ export default function LoginForm() {
                         disabled={isSubmitting}
                         className="bg-amber-500 text-white px-4 py-2 rounded w-full hover:bg-amber-600 duration-150 cursor-pointer"
                     >
-                        Giriş Yap
+                        {isSubmitting ? "..." : "Giriş Yap"}
                     </button>
                 </Form>
             )}

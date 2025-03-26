@@ -84,32 +84,33 @@ export default async function createAndDownloadRaportPDF(
     drawTextWithWrap(raport.raportExplanation || "", 62, height - 584);
 
     if (raport.photos && raport.photos.length > 0) {
-        for (const photoBlob of raport.photos) {
-            const photoBytes = await photoBlob.arrayBuffer();
-            const photoType = photoBlob.type;
+        for (const base64Photo of raport.photos) {
+            const { byteArray, type } = base64ToUint8Array(base64Photo);
             let photo;
-            if (photoType === "image/png") {
-                photo = await pdfDoc.embedPng(photoBytes);
-            } else if (
-                photoType === "image/jpeg" ||
-                photoType === "image/webp"
-            ) {
-                photo = await pdfDoc.embedJpg(photoBytes);
+
+            if (type === "image/png") {
+                photo = await pdfDoc.embedPng(byteArray);
+            } else if (type === "image/jpeg" || type === "image/webp") {
+                photo = await pdfDoc.embedJpg(byteArray);
             } else {
-                console.error(
-                    "Desteklenmeyen image formatı (geçiliyor):",
-                    photoType
-                );
+                console.error("Unsupported image format (skipping):", type);
                 continue;
             }
 
-            const photoDims = photo.scale(0.5);
+            const originalWidth = photo.width;
+            const originalHeight = photo.height;
+            const scaleFactor = Math.min(width / originalWidth, height / originalHeight);
+            const scaledWidth = originalWidth * scaleFactor;
+            const scaledHeight = originalHeight * scaleFactor;
+            const xPos = (width - scaledWidth) / 2;
+            const yPos = (height - scaledHeight) / 2;
+
             const newPage = pdfDoc.addPage([width, height]);
             newPage.drawImage(photo, {
-                x: 0,
-                y: height - photoDims.height,
-                width: photoDims.width,
-                height: photoDims.height,
+                x: xPos,
+                y: yPos,
+                width: scaledWidth,
+                height: scaledHeight,
             });
         }
     }
@@ -132,6 +133,7 @@ export default async function createAndDownloadRaportPDF(
             file: base64Pdf,
             name: `${raport.name}-${raport.orderNo}.pdf`,
             uploadedAt: getTodayDate(),
+            isTrendyol: raport.isTrendyol,
             token,
         },
         {
@@ -141,4 +143,23 @@ export default async function createAndDownloadRaportPDF(
             },
         }
     );
+}
+
+function base64ToUint8Array(base64String: string) {
+    const matches = base64String.match(/^data:(image\/\w+);base64,(.+)$/);
+    if (!matches) {
+        throw new Error("Invalid Base64 format");
+    }
+
+    const type = matches[1]; // image/png, image/jpeg, etc.
+    const base64Data = matches[2];
+
+    const binaryString = atob(base64Data);
+    const len = binaryString.length;
+    const byteArray = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+        byteArray[i] = binaryString.charCodeAt(i);
+    }
+
+    return { byteArray, type };
 }

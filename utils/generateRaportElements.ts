@@ -7,18 +7,22 @@ export default function generateRaportElements(html: string) {
     const fragment = JSDOM.fragment(html);
 
     if (!fragment || !html) {
-        return;
+        return [];
     }
 
-    const tableRows = fragment.querySelectorAll(
+    const tableTrendyolRows = fragment.querySelectorAll(
         ".chakra-table__row.css-xpkcrm"
     );
-    const trendyolRaportElements: RaportElement[] = [];
-    tableRows.forEach((row) => {
+    const tableHepsiburadaRows = fragment.querySelectorAll(".claim-row");
+
+    const raportElements: RaportElement[] = [];
+
+    tableTrendyolRows.forEach((row) => {
         const raportElement: RaportElement = {
             name:
                 removeExtraSpaces(
-                    row.querySelectorAll(".css-1mx7c9e")[2]?.textContent
+                    row.querySelectorAll(".css-3e0hee .css-1mx7c9e")[0]
+                        ?.textContent
                 ) || "*",
             date: getTodayDate(),
             brand: "SoundWave",
@@ -54,73 +58,71 @@ export default function generateRaportElements(html: string) {
                     row.querySelectorAll(".css-l7b5vo .css-giljn2")[0]
                         ?.textContent
                 ) || "*",
+            isTrendyol: true,
         };
-        trendyolRaportElements.push(raportElement);
+        raportElements.push(raportElement);
     });
 
-    if (trendyolRaportElements && trendyolRaportElements.length > 0) {
-        return trendyolRaportElements;
-    } else {
-        const tableRows = fragment.querySelectorAll(".claim-row");
-        const hepsiburadaRaportElements: RaportElement[] = [];
-        tableRows.forEach((row) => {
-            const raportElement: RaportElement = {
-                name:
-                    removeExtraSpaces(
-                        row.querySelectorAll(
-                            ".summary-claim-info__name__text"
-                        )[0]?.textContent
-                    ) || "*",
-                date: getTodayDate(),
-                brand: "SoundWave",
-                model:
-                    truncateText(
-                        removeExtraSpaces(
-                            row.querySelectorAll(
-                                ".product-card__content__name"
-                            )[0]?.textContent
-                        )
-                    ) || "*",
-                orderNo:
-                    removeExtraSpaces(
-                        row.querySelectorAll(
-                            ".solo-list-item.summary-claim-info__order__number__content__text .solo-list-item__value"
-                        )[0]?.textContent
-                    ) || "*",
-                refundDate:
-                    removeExtraSpaces(
-                        row.querySelectorAll(
-                            ".solo-list-item.summary-claim-info__claim__date__content__text .solo-list-item__content .solo-list-item__value"
-                        )[0]?.textContent
-                    ) || "*",
-                refundExplanation:
-                    removeExtraSpaces(
-                        row.querySelectorAll(
-                            ".summary-claim-explanation__content__claim-explanation"
-                        )[0]?.textContent
-                    ) || "*",
-                raportExplanation:
-                    "Ürün kullanıcıya sorunsuz gönderilmiştir. Üründe hasar olduğundan dolayı tekrar 0 olarak satışa uygun değildir.",
-                orderDate:
-                    removeFirstTwoWords(
-                        removeExtraSpaces(
-                            row.querySelectorAll(
-                                ".summary-claim-info__order__date"
-                            )[0]?.textContent
-                        )
-                    ) || "*",
-                refundReason:
-                    removeExtraSpaces(
-                        row.querySelectorAll(
-                            ".summary-claim-explanation__content__claim-reason"
-                        )[0]?.textContent
-                    ) || "*",
-            };
-            hepsiburadaRaportElements.push(raportElement);
-        });
-
-        return hepsiburadaRaportElements;
+    if (raportElements.length > 0) {
+        return raportElements;
     }
+
+    tableHepsiburadaRows.forEach((row) => {
+        const raportElement: RaportElement = {
+            name:
+                removeExtraSpaces(
+                    row.querySelectorAll(".summary-claim-info__name__text")[0]
+                        ?.textContent
+                ) || "*",
+            date: getTodayDate(),
+            brand: "SoundWave",
+            model:
+                truncateText(
+                    removeExtraSpaces(
+                        row.querySelectorAll(".product-card__content__name")[0]
+                            ?.textContent
+                    )
+                ) || "*",
+            orderNo:
+                removeExtraSpaces(
+                    row.querySelectorAll(
+                        ".solo-list-item.summary-claim-info__order__number__content__text .solo-list-item__value"
+                    )[0]?.textContent
+                ) || "*",
+            refundDate:
+                removeExtraSpaces(
+                    row.querySelectorAll(
+                        ".solo-list-item.summary-claim-info__claim__date__content__text .solo-list-item__content .solo-list-item__value"
+                    )[0]?.textContent
+                ) || "*",
+            refundExplanation:
+                removeExtraSpaces(
+                    row.querySelectorAll(
+                        ".summary-claim-explanation__content__claim-explanation"
+                    )[0]?.textContent
+                ) || "*",
+            raportExplanation:
+                "Ürün kullanıcıya sorunsuz gönderilmiştir. Üründe hasar olduğundan dolayı tekrar 0 olarak satışa uygun değildir.",
+            orderDate:
+                removeFirstTwoWords(
+                    removeExtraSpaces(
+                        row.querySelectorAll(
+                            ".summary-claim-info__order__date"
+                        )[0]?.textContent
+                    )
+                ) || "*",
+            refundReason:
+                removeExtraSpaces(
+                    row.querySelectorAll(
+                        ".summary-claim-explanation__content__claim-reason"
+                    )[0]?.textContent
+                ) || "*",
+            isTrendyol: false,
+        };
+        raportElements.push(raportElement);
+    });
+
+    return raportElements;
 }
 
 function truncateText(text: string | undefined, length = 25) {

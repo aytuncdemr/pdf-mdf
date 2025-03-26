@@ -5,7 +5,7 @@ import Raport from "@/components/Raport";
 import { UserContext } from "@/contexts/UserContext";
 import { RaportElement } from "@/interfaces/RaportElement";
 import axios, { isAxiosError } from "axios";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 export default function AddPDFPage() {
     const [html, setHTML] = useState<string | null>(null);
@@ -15,89 +15,135 @@ export default function AddPDFPage() {
     >(null);
     const userContext = useContext(UserContext);
 
-    function generateRaportsHandler() {
+    async function generateRaportsHandler() {
         try {
             setError(null);
             setHTML(null);
             setRaportElements(null);
-            async function getRaportElements() {
-                const { data } = await axios.post(
-                    "/api/mongodb/generate-raports",
-                    { html, token: userContext?.user?.token }
-                );
-                setRaportElements(data);
-                if (data.length) {
-                    setError(null);
-                } else {
-                    setError("Hata: HTML formatı hatalı veya eksik");
-                    setRaportElements(null);
-                }
-            }
-            getRaportElements();
+            const { data } = await axios.post("/api/mongodb/generate-raports", {
+                html,
+                token: userContext?.user?.token,
+            });
+
+            setRaportElements(data);
         } catch (error) {
             if (isAxiosError(error)) {
-                setError(error.response?.data.message);
-            }
-            if (error instanceof Error) {
+                setError(error.response?.data.message || error.message);
+            } else if (error instanceof Error) {
                 setError(error.message);
             }
         }
     }
 
+    async function getLiveRaports() {
+        try {
+            setError(null);
+            const { data } = await axios.get("/api/mongodb/raports", {
+                headers: {
+                    Authorization: `Bearer ${userContext?.user?.token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            setRaportElements(data);
+        } catch (error) {
+            if (isAxiosError(error)) {
+                setError(error.response?.data.message || error.message);
+            } else if (error instanceof Error) {
+                setError(error.message);
+            }
+        }
+    }
+
+    useEffect(() => {
+        let timeOutID: NodeJS.Timeout;
+
+        async function sendRaportsMongoDB() {
+            try {
+                if (!raportElements) {
+                    return;
+                }
+                await axios.post("/api/mongodb/raports", {
+                    raports: raportElements,
+                    token: userContext?.user?.token,
+                });
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    setError(error.response?.data.message || error.message);
+                } else if (error instanceof Error) {
+                    setError(error.message);
+                }
+            }
+        }
+
+        timeOutID = setTimeout(() => {
+            sendRaportsMongoDB();
+        }, 2000);
+
+        return () => clearTimeout(timeOutID);
+    }, [raportElements]);
+
     return (
         <section className="add-pdf-section">
             <div className="add-pdf-container">
                 <textarea
-                    className="bg-gray-700 p-2 text-lg  outline-none border border-gray-600 w-full min-h-96"
+                    className="bg-gray-700 p-2 text-lg  outline-none  w-full min-h-96"
                     onChange={(e) => setHTML(e.target.value)}
                     value={html || ""}
-                    placeholder="HTML kodunu giriniz"
+                    placeholder="HTML kodunu giriniz (<tbody>....</tbody>)"
                 ></textarea>
                 {error && <p className="text-red-500 text-lg">{error}</p>}
 
-                <div className="flex items-center gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-5 items-center gap-2 lg:gap-4 mt-3">
                     <button
-                        className={`bg-amber-600 hover:bg-amber-700 duration-150 text-white text-lg cursor-pointer py-2 px-6 rounded-lg mt-3 ${
-                            (!html) &&
+                        className={`bg-amber-600 hover:bg-amber-700 duration-150 text-white text-lg cursor-pointer py-2 px-6 rounded-lg  ${
+                            !html &&
                             "!bg-gray-500 !cursor-default !pointer-events-none"
                         }`}
-                        onClick={() => {
-                                generateRaportsHandler();
-                            
-                        }}
+                        onClick={generateRaportsHandler}
                     >
                         Raporları oluştur
                     </button>
                     <button
-                        onClick={() => {
-                            setHTML(null);
-                            setRaportElements(null);
-                            setError(null);
-                        }}
-                        className={` bg-red-600 hover:bg-red-700 duration-150 text-white text-lg cursor-pointer py-2 px-6 rounded-lg mt-3 ${
+                        onClick={() => setHTML(null)}
+                        className={` bg-red-600 hover:bg-red-700 duration-150 text-white text-lg cursor-pointer py-2 px-6 rounded-lg  ${
                             !html &&
                             "!bg-gray-500 !cursor-default !pointer-events-none"
                         }`}
                     >
                         Temizle
                     </button>
+                    <button
+                        onClick={getLiveRaports}
+                        className={
+                            "bg-amber-600 hover:bg-amber-700 duration-150 text-white text-lg cursor-pointer py-2 px-6 rounded-lg "
+                        }
+                    >
+                        Canlı Bağlan
+                    </button>
                 </div>
                 {raportElements && raportElements.length > 0 && (
-                    <div className="flex items-center gap-4 mt-6">
+                    <div className="flex flex-col lg:flex-row items-center gap-4 mt-6">
                         <p className="text-green-500 text-xl ">
                             Toplam: ({raportElements.length} rapor)
                         </p>
                         <AllImageUploader
                             setRaportElements={setRaportElements}
                         ></AllImageUploader>
+                        <button
+                            onClick={() => setRaportElements(null)}
+                            className="text-xl underline cursor-pointer text-red-500 hover:text-red-600 underline-offset-4  duration-150"
+                        >
+                            Raporları Sil
+                        </button>
                     </div>
                 )}
-                <div className="raports grid grid-cols-4 gap-8 mt-4">
+                <div className="raports grid grid-cols-1 md:grid-cols-4 gap-8 mt-4">
                     {raportElements &&
                         raportElements.map((raportElem) => {
                             return (
                                 <Raport
-                                    key={`${raportElem.orderNo}-${raportElem?.photos?.length}`} // Ensuring re-render when photos change
+                                    key={raportElem.orderNo}
                                     raportElement={raportElem}
                                     setRaportElements={setRaportElements}
                                 ></Raport>

@@ -1,5 +1,3 @@
-import { StaticImageData } from "next/image";
-
 export interface RaportElement {
     date: string;
     name: string;
@@ -12,5 +10,6 @@ export interface RaportElement {
     refundExplanation: string;
     raportExplanation: string;
 
-    photos?: File[];
+    isTrendyol: boolean;
+    photos?: string[];
 }

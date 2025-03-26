@@ -1,20 +1,37 @@
 "use client";
 
 import { RaportElement } from "@/interfaces/RaportElement";
+import base64Files from "@/utils/base64Files";
 import _ from "lodash";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
 export default function ImageUploader({
-    setRaport,
+    setRaportElements,
+    orderNo,
 }: {
-    setRaport: React.Dispatch<React.SetStateAction<RaportElement>>;
+    setRaportElements: React.Dispatch<
+        React.SetStateAction<RaportElement[] | null>
+    >;
+    orderNo: string;
 }) {
-    const onDrop = useCallback((acceptedFiles: File[]) => {
-        setRaport((prevState) => {
+    const onDrop = useCallback(async (acceptedFiles: File[]) => {
+        const acceptedPhotos = await base64Files(acceptedFiles);
+
+        setRaportElements((prevState) => {
             const newState = _.cloneDeep(prevState);
 
-            newState.photos = acceptedFiles;
+            if (!newState) {
+                return null;
+            }
+
+            const raport = newState.find((elem) => elem.orderNo === orderNo);
+
+            if (raport) {
+                raport.photos = raport.photos
+                    ? [...raport.photos, ...acceptedPhotos]
+                    : [...acceptedPhotos];
+            }
 
             return newState;
         });
@@ -29,14 +46,16 @@ export default function ImageUploader({
         <div className="image-uploader">
             <div
                 {...getRootProps()}
-                className={`dropzone ${
-                    isDragActive && "bg-gray-400 border-none"
-                } border-2 border-gray-500 rounded-lg flex justify-center items-center`}
+                className={`dropzone cursor-pointer ${
+                    isDragActive && "bg-gray-900 border-gray-900"
+                } border-2 border-gray-500 rounded-lg flex justify-center group hover:border-gray-600 duration-150 items-center mb-4`}
             >
                 <input {...getInputProps()} />
-                <div className="flex items-center justify-center max-w-[6rem] w-[6rem] h-[6rem] rounded-lg cursor-pointer">
-                {isDragActive && <p>Ekle...</p>}
-                {!isDragActive && <p className="text-4xl">+</p>}
+                <div className="flex items-center py-2 rounded-lg group-hover:text-gray-500 duration-150">
+                    {isDragActive && <p>Ekle...</p>}
+                    {!isDragActive && (
+                        <p className="text-xl">Fotoğraf Ekle +</p>
+                    )}
                 </div>
             </div>
         </div>

@@ -18,7 +18,7 @@ export default function RootLayout({
             <body className="bg-gray-800 text-white">
                 <UserContextProvider>
                     <Header></Header>
-                    <main className="min-h-screen px-12">{children}</main>
+                    <main className="min-h-screen py-6 px-8 lg:px-16">{children}</main>
                 </UserContextProvider>
             </body>
         </html>

@@ -1,7 +1,7 @@
 "use client";
 
 import { User } from "@/interfaces/User";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
 export const UserContext = createContext<{
     user: User | null;
@@ -14,13 +14,6 @@ export default function UserContextProvider({
     children: React.ReactNode;
 }) {
     const [user, setUser] = useState<User | null>(null);
-
-    useEffect(() => {
-        const localToken = localStorage.getItem("token");
-        if (localToken) {
-            setUser({ token: localToken });
-        }
-    }, []);
 
     return (
         <UserContext.Provider value={{ user, setUser }}>
