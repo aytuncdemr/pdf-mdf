@@ -56,7 +56,6 @@ export default function AddPDFPage() {
     }
 
     useEffect(() => {
-
         async function sendRaportsMongoDB() {
             try {
                 if (!raportElements) {
@@ -77,7 +76,7 @@ export default function AddPDFPage() {
 
         const timeOutID = setTimeout(() => {
             sendRaportsMongoDB();
-        }, 2000);
+        }, 1000);
 
         return () => clearTimeout(timeOutID);
     }, [raportElements]);
