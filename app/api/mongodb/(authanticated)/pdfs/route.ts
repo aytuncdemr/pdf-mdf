@@ -3,7 +3,6 @@ import { ObjectId } from "mongodb";
 import jwt from "jsonwebtoken";
 
 export async function GET(request: Request) {
-    
     const { searchParams } = new URL(request.url);
     const _id = searchParams.get("id");
     const authHeader = request.headers.get("authorization");
@@ -40,6 +39,7 @@ export async function GET(request: Request) {
                             _id: 1,
                             uploadedAt: 1,
                             isTrendyol: 1,
+                            size: 1,
                         },
                     }
                 )

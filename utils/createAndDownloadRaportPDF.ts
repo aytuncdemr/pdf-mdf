@@ -131,6 +131,7 @@ export default async function createAndDownloadRaportPDF(
         "/api/mongodb/pdfs/add-pdf",
         {
             file: base64Pdf,
+            size: blob.size,
             name: `${raport.name}-${raport.orderNo}.pdf`,
             uploadedAt: getTodayDate(),
             isTrendyol: raport.isTrendyol,

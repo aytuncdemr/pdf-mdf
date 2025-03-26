@@ -29,7 +29,7 @@ export default function Raport({
                 (elem) => elem.orderNo === raportElement.orderNo
             );
 
-            if (raport && field !== "photos" && field !== "isTrendyol") {
+            if (raport && field !== "photos" && field !== "isTrendyol" && field !== "size") {
                 raport[field] = e.target.value;
             }
 

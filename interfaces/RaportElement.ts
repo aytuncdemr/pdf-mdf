@@ -12,4 +12,5 @@ export interface RaportElement {
 
     isTrendyol: boolean;
     photos?: string[];
+    size: number;
 }
