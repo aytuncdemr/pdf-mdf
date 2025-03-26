@@ -56,7 +56,6 @@ export default function AddPDFPage() {
     }
 
     useEffect(() => {
-        let timeOutID: NodeJS.Timeout;
 
         async function sendRaportsMongoDB() {
             try {
@@ -76,7 +75,7 @@ export default function AddPDFPage() {
             }
         }
 
-        timeOutID = setTimeout(() => {
+        const timeOutID = setTimeout(() => {
             sendRaportsMongoDB();
         }, 2000);
 

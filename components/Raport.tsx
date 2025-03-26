@@ -25,7 +25,7 @@ export default function Raport({
         setRaportElements((prevState) => {
             const newState = _.cloneDeep(prevState);
 
-            let raport = newState?.find(
+            const raport = newState?.find(
                 (elem) => elem.orderNo === raportElement.orderNo
             );
 
@@ -63,7 +63,7 @@ export default function Raport({
         setRaportElements((prevState) => {
             const newState = _.cloneDeep(prevState);
 
-            let raport = newState?.find(
+            const raport = newState?.find(
                 (elem) => elem.orderNo === raportElement.orderNo
             );
 
