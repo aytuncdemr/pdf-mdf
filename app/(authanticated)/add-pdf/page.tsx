@@ -99,7 +99,6 @@ export default function AddPDFPage() {
                     value={html || ""}
                     placeholder="HTML kodunu giriniz (<tbody>....</tbody>)"
                 ></textarea>
-                {error && <p className="text-red-500 text-lg">{error}</p>}
 
                 <div className="grid grid-cols-1 lg:grid-cols-5 items-center gap-2 lg:gap-4 mt-3">
                     <button
@@ -131,7 +130,8 @@ export default function AddPDFPage() {
                 </div>
                 {isGettingRaports && <p className="text-xl mt-2">Raporlar hazırlanıyor...</p>}
                 {isGettingLiveRaports && <p className="text-xl mt-2">Raporlar alınıyor...</p>}
-                
+                {error && <p className="text-red-500 text-lg">{error}</p>}
+
                 {raportElements && raportElements.length > 0 && (
                     <div className="flex flex-col lg:flex-row items-center gap-4 mt-6">
                         <p className="text-green-500 text-xl ">
