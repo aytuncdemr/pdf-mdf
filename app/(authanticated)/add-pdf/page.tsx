@@ -8,9 +8,9 @@ import axios, { isAxiosError } from "axios";
 import { useContext, useEffect, useState } from "react";
 
 export default function AddPDFPage() {
-    const [isGettingRaports,setIsGettingRaports] = useState(false);
-    const [isGettingLiveRaports,setIsGettingLiveRaports] = useState(false);
-
+    const [isGettingRaports, setIsGettingRaports] = useState(false);
+    const [isGettingLiveRaports, setIsGettingLiveRaports] = useState(false);
+    const [didGetLiveRaports, setDidGetLiveRaports] = useState(false);
     const [html, setHTML] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [raportElements, setRaportElements] = useState<
@@ -36,7 +36,7 @@ export default function AddPDFPage() {
             } else if (error instanceof Error) {
                 setError(error.message);
             }
-        }finally{
+        } finally {
             setIsGettingRaports(false);
         }
     }
@@ -53,13 +53,14 @@ export default function AddPDFPage() {
             });
 
             setRaportElements(data);
+            setDidGetLiveRaports(true);
         } catch (error) {
             if (isAxiosError(error)) {
                 setError(error.response?.data.message || error.message);
             } else if (error instanceof Error) {
                 setError(error.message);
             }
-        }finally{
+        } finally {
             setIsGettingLiveRaports(false);
         }
     }
@@ -125,11 +126,15 @@ export default function AddPDFPage() {
                             "bg-amber-600 hover:bg-amber-700 duration-150 text-white text-lg cursor-pointer py-2 px-6 rounded-lg "
                         }
                     >
-                        Canlı Bağlan
+                        {didGetLiveRaports ? "Yenile" : "Canlı Bağlan"}
                     </button>
                 </div>
-                {isGettingRaports && <p className="text-xl mt-2">Raporlar hazırlanıyor...</p>}
-                {isGettingLiveRaports && <p className="text-xl mt-2">Raporlar alınıyor...</p>}
+                {isGettingRaports && (
+                    <p className="text-xl mt-2">Raporlar hazırlanıyor...</p>
+                )}
+                {isGettingLiveRaports && (
+                    <p className="text-xl mt-2">Raporlar alınıyor...</p>
+                )}
                 {error && <p className="text-red-500 text-lg">{error}</p>}
 
                 {raportElements && raportElements.length > 0 && (
