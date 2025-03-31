@@ -68,6 +68,7 @@ export default function AddPDFPage() {
     useEffect(() => {
         async function sendRaportsMongoDB() {
             try {
+                console.log("here:",raportElements);
                 if (!raportElements) {
                     return;
                 }
