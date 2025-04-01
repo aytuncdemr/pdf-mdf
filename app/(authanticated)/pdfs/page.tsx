@@ -141,7 +141,11 @@ export default function PDFSPage() {
 
                                     {pdf.size && (
                                         <span className="absolute bottom-1 right-2 text-sm">
-                                            ({(pdf.size / Math.pow(1024,2)).toFixed(2)}MB)
+                                            (
+                                            {(
+                                                pdf.size / Math.pow(1024, 2)
+                                            ).toFixed(2)}
+                                            MB)
                                         </span>
                                     )}
                                 </button>

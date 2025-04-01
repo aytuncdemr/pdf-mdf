@@ -13,6 +13,7 @@
     "@types/react-dropzone": "^4.2.2",
     "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
+    "browser-image-compression": "^2.0.2",
     "fontkit": "^2.0.4",
     "formik": "^2.4.6",
     "jsdom": "^26.0.0",

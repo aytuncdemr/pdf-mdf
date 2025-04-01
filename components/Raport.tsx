@@ -29,7 +29,12 @@ export default function Raport({
                 (elem) => elem.orderNo === raportElement.orderNo
             );
 
-            if (raport && field !== "photos" && field !== "isTrendyol" && field !== "size") {
+            if (
+                raport &&
+                field !== "photos" &&
+                field !== "isTrendyol" &&
+                field !== "size"
+            ) {
                 raport[field] = e.target.value;
             }
 
@@ -330,7 +335,7 @@ export default function Raport({
             </div>
             <button
                 onClick={() => setIsEditing((prevState) => !prevState)}
-                className="bg-gray-500 hover:bg-gray-600 duration-150 py-2 rounded-lg cursor-pointer"
+                className="bg-amber-600 hover:bg-amber-700 duration-150 py-2 rounded-lg cursor-pointer"
             >
                 {isEditing ? "Tamam" : "Düzenle"}
             </button>

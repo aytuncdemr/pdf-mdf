@@ -26,7 +26,9 @@ export async function GET(request: Request) {
 
         const { raports } = await connectMongoDB();
 
-        const raportDocument = await raports.findOne({});
+        const raportDocument = await raports.findOne({
+            raports: { $exists: true },
+        });
 
         if (raportDocument?.raports && raportDocument.raports.length > 0) {
             return new Response(JSON.stringify(raportDocument.raports), {
@@ -69,11 +71,24 @@ export async function POST(request: Request) {
             );
         }
 
-        const { raports } = await connectMongoDB();
-        raports.deleteMany({});
-        if (body.raports) {
-            raports.insertOne({ raports: body.raports });
+        if (!body.raports) {
+            return new Response(
+                JSON.stringify({
+                    message:
+                        "Bu api route için body göndermeniz gerekmektedir.",
+                }),
+                {
+                    status: 401,
+                }
+            );
         }
+
+        const { raports } = await connectMongoDB();
+        raports.updateOne(
+            {},
+            { $set: { raports: body.raports } },
+            { upsert: true }
+        );
         return new Response(
             JSON.stringify({ message: "Başarıyla raporlar yenilendi." }),
             { status: 200 }
