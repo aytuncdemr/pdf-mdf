@@ -73,7 +73,7 @@ export default function AddPDFPage() {
         }
     }
 
-    async function sendRaportsMongoDB(data: unknown) {
+    async function sendRaportsMongoDB(data?: unknown) {
         try {
             if (!raportElements) {
                 return;
@@ -139,7 +139,7 @@ export default function AddPDFPage() {
                     </button>
 
                     <button
-                        onClick={sendRaportsMongoDB}
+                        onClick={() => sendRaportsMongoDB()}
                         className={`bg-amber-600 hover:bg-amber-700 duration-150 text-white text-lg cursor-pointer py-2 px-6 rounded-lg ${
                             (!didGetLiveRaports ||
                                 isGettingLiveRaports ||
