@@ -4,6 +4,7 @@ import { PDFDocument, rgb } from "pdf-lib";
 import * as fontkit from "fontkit";
 import { blobToBase64 } from "./blobToBase64";
 import { getTodayDate } from "./getTodayDate";
+import imageCompression from "browser-image-compression";
 
 export default async function createAndDownloadRaportPDF(
     raport: RaportElement,
@@ -85,7 +86,7 @@ export default async function createAndDownloadRaportPDF(
 
     if (raport.photos && raport.photos.length > 0) {
         for (const base64Photo of raport.photos) {
-            const { byteArray, type } = base64ToUint8Array(base64Photo);
+            const { byteArray, type } = await compressImage(base64Photo); // ✅ Compress first
             let photo;
 
             if (type === "image/png") {
@@ -99,7 +100,10 @@ export default async function createAndDownloadRaportPDF(
 
             const originalWidth = photo.width;
             const originalHeight = photo.height;
-            const scaleFactor = Math.min(width / originalWidth, height / originalHeight);
+            const scaleFactor = Math.min(
+                width / originalWidth,
+                height / originalHeight
+            );
             const scaledWidth = originalWidth * scaleFactor;
             const scaledHeight = originalHeight * scaleFactor;
             const xPos = (width - scaledWidth) / 2;
@@ -144,6 +148,29 @@ export default async function createAndDownloadRaportPDF(
             },
         }
     );
+}
+
+async function compressImage(base64Photo: string) {
+    const { byteArray, type } = base64ToUint8Array(base64Photo);
+
+    const blob = new Blob([byteArray], { type });
+    const file = new File([blob], "compressed-image", { type });
+
+    const options = {
+        maxSizeMB: 0.5, // Compress to around 500KB
+        maxWidthOrHeight: 1000, // Resize if larger than 1000px
+        useWebWorker: true, // Improves performance
+        initialQuality: 0.7, // JPEG/PNG quality
+    };
+
+    try {
+        const compressedBlob = await imageCompression(file, options); // ✅ Now it works!
+        const compressedBase64 = await blobToBase64(compressedBlob);
+        return base64ToUint8Array(compressedBase64);
+    } catch (error) {
+        console.error("Image compression failed:", error);
+        return { byteArray, type }; // Return original if compression fails
+    }
 }
 
 function base64ToUint8Array(base64String: string) {
