@@ -35,6 +35,7 @@ export default function AddPDFPage() {
             });
 
             setRaportElements(data);
+            sendRaportsMongoDB(data);
         } catch (error) {
             if (isAxiosError(error)) {
                 setError(error.response?.data.message || error.message);
@@ -72,14 +73,14 @@ export default function AddPDFPage() {
         }
     }
 
-    async function sendRaportsMongoDB() {
+    async function sendRaportsMongoDB(data: unknown) {
         try {
             if (!raportElements) {
                 return;
             }
             setIsUpdatingLiveRaports(true);
             await axios.post("/api/mongodb/raports", {
-                raports: raportElements,
+                raports: data || raportElements,
                 token: userContext?.user?.token,
             });
         } catch (error) {
