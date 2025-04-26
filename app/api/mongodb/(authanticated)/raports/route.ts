@@ -84,11 +84,7 @@ export async function POST(request: Request) {
         }
 
         const { raports } = await connectMongoDB();
-        raports.updateOne(
-            {},
-            { $set: { raports: body.raports } },
-            { upsert: true }
-        );
+        raports.updateOne({}, { $set: { raports: body.raports } });
         return new Response(
             JSON.stringify({ message: "Başarıyla raporlar yenilendi." }),
             { status: 200 }
@@ -106,3 +102,11 @@ export async function POST(request: Request) {
         }
     }
 }
+
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: "16MB",
+        },
+    },
+};

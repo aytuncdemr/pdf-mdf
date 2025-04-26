@@ -3,7 +3,7 @@ export default function calculateDaysDifference(
     refundDateStr: string,
     isTrendyol: boolean
 ): string {
-    if (!isTrendyol) {
+    if (!isTrendyol || !orderDateStr || !refundDateStr) {
         return "";
     }
 
@@ -20,9 +20,7 @@ export default function calculateDaysDifference(
         orderMatch.length < 5 ||
         refundMatch.length < 5
     ) {
-        throw new Error(
-            "Invalid date format. Expected format: dd.MM.yyyy HH:mm"
-        );
+        return "";
     }
 
     // Convert extracted strings into numbers
@@ -51,5 +49,9 @@ export default function calculateDaysDifference(
     const diffInMs = refundDate.getTime() - orderDate.getTime();
 
     // Convert milliseconds to days
-    return Math.floor(diffInMs / (1000 * 60 * 60 * 24)).toString();
+    return (
+        "(" +
+        Math.floor(diffInMs / (1000 * 60 * 60 * 24)).toString() +
+        " gün sonra)"
+    );
 }

@@ -22,6 +22,7 @@ export async function connectMongoDB() {
     const users = cachedDb.collection("users");
     const pdfs = cachedDb.collection("pdfs");
     const raports = cachedDb.collection("raports");
+    const notes = cachedDb.collection("notes");
 
-    return { db: cachedDb, users, pdfs, client: cachedClient, raports };
+    return { db: cachedDb, users, pdfs, client: cachedClient, raports, notes };
 }

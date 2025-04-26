@@ -5,8 +5,10 @@ import Raport from "@/components/Raport";
 import { UserContext } from "@/contexts/UserContext";
 import { RaportElement } from "@/interfaces/RaportElement";
 import generateQueryName from "@/utils/generateQueryName";
+import { getTodayDate } from "@/utils/getTodayDate";
 import { removeTurkishChars } from "@/utils/removeTurkishCharacters";
 import axios, { isAxiosError } from "axios";
+import _ from "lodash";
 import { useContext, useState } from "react";
 
 export default function AddPDFPage() {
@@ -21,7 +23,7 @@ export default function AddPDFPage() {
         RaportElement[] | null
     >(null);
     const userContext = useContext(UserContext);
-
+    
     async function generateRaportsHandler() {
         try {
             setError(null);
@@ -75,9 +77,7 @@ export default function AddPDFPage() {
 
     async function sendRaportsMongoDB(data?: unknown) {
         try {
-            if (!raportElements) {
-                return;
-            }
+            setError(null);
             setIsUpdatingLiveRaports(true);
             await axios.post("/api/mongodb/raports", {
                 raports: data || raportElements,
@@ -139,9 +139,9 @@ export default function AddPDFPage() {
                     </button>
 
                     <button
-                        onClick={() => sendRaportsMongoDB()}
+                        onClick={() => sendRaportsMongoDB()}
                         className={`bg-amber-600 hover:bg-amber-700 duration-150 text-white text-lg cursor-pointer py-2 px-6 rounded-lg ${
-                            (!didGetLiveRaports ||
+                            ( 
                                 isGettingLiveRaports ||
                                 isGettingRaports ||
                                 isUpdatingLiveRaports) &&
@@ -161,7 +161,6 @@ export default function AddPDFPage() {
                     <p className="text-xl mt-2">Raporlar Güncelleniyor....</p>
                 )}
                 {error && <p className="text-red-500 text-lg mt-2">{error}</p>}
-
                 {raportElements && raportElements.length > 0 && (
                     <>
                         <div className="flex flex-col lg:flex-row items-center gap-4 mt-6">
@@ -187,6 +186,70 @@ export default function AddPDFPage() {
                     </>
                 )}
                 <div className="raports grid grid-cols-1 md:grid-cols-4 gap-8 mt-4">
+                    <div className="border border-gray-500 h-[650px] flex flex-col gap-8 items-center justify-center">
+                        <p className="text-2xl lg:text-3xl">Yeni Rapor Ekle</p>
+                        <div className="flex flex-col gap-4 mt-4">
+                            <p
+                                onClick={() => {
+                                    setRaportElements((prevState) => {
+                                        const newState =
+                                            _.cloneDeep(prevState) || [];
+
+                                        newState?.push({
+                                            date: getTodayDate(),
+                                            name: "",
+                                            brand: "",
+                                            model: "",
+                                            orderNo: "" + newState.length,
+                                            orderDate: "",
+                                            refundDate: "",
+                                            refundReason: "",
+                                            refundExplanation: "",
+                                            raportExplanation:
+                                                "Ürün kullanıcıya sorunsuz gönderilmiştir. Üründe hasar olduğundan dolayı tekrar 0 olarak satışa uygun değildir.",
+                                            isTrendyol: true,
+                                            isManual: true,
+                                        });
+
+                                        return newState;
+                                    });
+                                }}
+                                className="text-center lg:text-xl border rounded-full py-1 px-8 border-gray-400 hover:border-transparent cursor-pointer duration-150 hover:bg-amber-600"
+                            >
+                                Trendyol
+                            </p>
+                            <p
+                                onClick={() => {
+                                    setRaportElements((prevState) => {
+                                        const newState =
+                                            _.cloneDeep(prevState) || [];
+
+                                        newState?.push({
+                                            date: getTodayDate(),
+                                            name: "",
+                                            brand: "",
+                                            model: "",
+                                            orderNo: "" + newState.length,
+                                            orderDate: "",
+                                            refundDate: "",
+                                            refundReason: "",
+                                            refundExplanation: "",
+                                            raportExplanation:
+                                                "Ürün kullanıcıya sorunsuz gönderilmiştir. Üründe hasar olduğundan dolayı tekrar 0 olarak satışa uygun değildir.",
+                                            isTrendyol: false,
+                                            isManual: true,
+                                        });
+
+                                        return newState;
+                                    });
+                                }}
+                                className="text-center lg:text-xl border rounded-full py-1 px-8 border-gray-400 hover:border-transparent cursor-pointer duration-150 hover:bg-amber-600"
+                            >
+                                Hepsiburada
+                            </p>
+                        </div>
+                    </div>
+
                     {raportElements &&
                         raportElements
                             .filter((raportElem) =>

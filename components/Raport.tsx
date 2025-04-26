@@ -33,11 +33,11 @@ export default function Raport({
                 raport &&
                 field !== "photos" &&
                 field !== "isTrendyol" &&
-                field !== "size"
+                field !== "isManual"
             ) {
                 raport[field] = e.target.value;
             }
-
+            
             return newState;
         });
     }
@@ -85,9 +85,11 @@ export default function Raport({
     return (
         <div className="raport text-white text-xl rounded-md border border-gray-500 py-8 px-4 flex flex-col gap-4">
             <div className="text-2xl text-center text-amber-500">
-                {raportElement.name.split(" ")[0].toUpperCase() +
-                    " " +
-                    raportElement.name.split(" ")[1].toUpperCase()}
+                {raportElement.name && !raportElement.isManual
+                    ? (raportElement?.name?.split(" ")[0]?.toUpperCase() || "") +
+                      " " +
+                      (raportElement?.name?.split(" ")[1]?.toUpperCase() || "")
+                    : raportElement?.name}
             </div>
             <div className="flex flex-col gap-1">
                 <div className="flex items-center justify-between">
@@ -217,14 +219,14 @@ export default function Raport({
                     className={`border border-gray-500 px-2 rounded-lg py-2 outline-none ${
                         !isEditing && "bg-gray-700"
                     }`}
-                    value={`${raportElement.refundDate} ${
-                        raportElement.isTrendyol
-                            ? `(${calculateDaysDifference(
+                    value={`${raportElement.refundDate}${
+                        raportElement.isTrendyol || !raportElement.isManual
+                            ? `${calculateDaysDifference(
                                   raportElement.orderDate,
                                   raportElement.refundDate,
                                   raportElement.isTrendyol
-                              )} gün sonra)`
-                            : ""
+                              )}`
+                            : null
                     }`}
                     onChange={(e) => handleChange(e, "refundDate")}
                     disabled={!isEditing}

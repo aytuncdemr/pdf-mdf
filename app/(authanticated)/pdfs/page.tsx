@@ -4,6 +4,7 @@ import SearchQuery from "@/components/SearchQuery";
 import { UserContext } from "@/contexts/UserContext";
 import { removeTurkishChars } from "@/utils/removeTurkishCharacters";
 import axios from "axios";
+import _ from "lodash";
 import { ObjectId } from "mongodb";
 import { useContext, useEffect, useState } from "react";
 
@@ -79,6 +80,45 @@ export default function PDFSPage() {
         }
     }
 
+    function removePDFHandler(
+        e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+        _id: string
+    ) {
+
+        e.stopPropagation();
+
+        try {
+            async function removePDF() {
+                await axios.get(
+                    `/api/mongodb/pdfs/remove-pdf?id=${_id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${userContext?.user?.token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+                setPDFDocuments((prevState) =>{
+
+                    const newState = _.cloneDeep(prevState);
+
+                    
+
+                    return newState?.filter((pdfDocument) => pdfDocument._id.toString() !== _id) || [];
+                });
+            }
+
+            removePDF();
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                setError(error.response?.data.message || error.message);
+            } else if (error instanceof Error) {
+                setError(error.message);
+            }
+        }
+
+    }
+
     return (
         <section className="pdfs-section">
             {error && <div className="text-2xl text-red-500">{error}</div>}
@@ -148,6 +188,17 @@ export default function PDFSPage() {
                                             MB)
                                         </span>
                                     )}
+                                    <span
+                                        onClick={(e) =>
+                                            removePDFHandler(
+                                                e,
+                                                pdf._id.toString()
+                                            )
+                                        }
+                                        className="absolute top-1 right-2 text-md text-red-500"
+                                    >
+                                        Sil
+                                    </span>
                                 </button>
                             );
                         })}

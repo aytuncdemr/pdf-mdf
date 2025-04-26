@@ -28,6 +28,16 @@ export default function Navigation() {
                         PDF Ekle
                     </Link>
                 </li>
+                <li>
+                    <Link
+                        className={`${
+                            pathName === "/notes" && "text-gray-400"
+                        } hover:text-gray-400 duration-150`}
+                        href={"/notes"}
+                    >
+                        Notlar
+                    </Link>
+                </li>
             </ul>
         </nav>
     );
