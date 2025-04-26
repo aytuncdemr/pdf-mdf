@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 
 export async function POST(request: Request) {
     try {
-        const { _id, ...body } = await request.json();
+        const { _id } = await request.json();
 
         const { notes } = await connectMongoDB();
 

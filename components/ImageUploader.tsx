@@ -2,7 +2,6 @@
 
 import { RaportElement } from "@/interfaces/RaportElement";
 import base64Files from "@/utils/base64Files";
-import { compressImage } from "@/utils/compressImage";
 import _ from "lodash";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";

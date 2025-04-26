@@ -6,7 +6,6 @@ import { generateNoteQueryName } from "@/utils/generateQueryName";
 import { getTodayDate } from "@/utils/getTodayDate";
 import { removeTurkishChars } from "@/utils/removeTurkishCharacters";
 import axios, { isAxiosError } from "axios";
-import _ from "lodash";
 import { useEffect, useState } from "react";
 
 export default function NotesPage() {
