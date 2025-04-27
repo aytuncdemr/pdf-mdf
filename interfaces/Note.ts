@@ -8,4 +8,5 @@ export interface Note {
     orderNo: string;
     cargoFirm: string;
     isDone: boolean;
+    phone: string;
 }

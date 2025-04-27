@@ -20,6 +20,7 @@ export default function NotesPage() {
         isDone: false,
         cargoFirm: "Trendyol",
         notes: [],
+        phone: "",
     });
 
     useEffect(() => {
@@ -52,6 +53,7 @@ export default function NotesPage() {
             isDone: false,
             cargoFirm: "Trendyol",
             notes: [],
+            phone: "",
         });
 
         try {
@@ -159,6 +161,26 @@ export default function NotesPage() {
                             <div className="flex flex-col gap-1">
                                 <label
                                     className="text-lg xl:text-xl text-amber-400"
+                                    htmlFor="orderNo"
+                                >
+                                    Telefon
+                                </label>
+                                <input
+                                    type="text"
+                                    className="text-lg xl:text-xl  p-2 rounded-lg border border-slate-500 outline-none"
+                                    id="orderNo"
+                                    value={newNote.phone}
+                                    onChange={(e) =>
+                                        setNewNote({
+                                            ...newNote,
+                                            phone: e.target.value,
+                                        })
+                                    }
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label
+                                    className="text-lg xl:text-xl text-amber-400"
                                     htmlFor="cargoFirm"
                                 >
                                     Kargo Firması
@@ -210,6 +232,7 @@ export default function NotesPage() {
                                         isDone: false,
                                         cargoFirm: "Trendyol",
                                         notes: [],
+                                        phone: "",
                                     });
                                     setIsAddingNote(false);
                                 }}
