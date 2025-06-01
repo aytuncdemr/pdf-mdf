@@ -10,7 +10,7 @@ export default async function createAndDownloadRaportPDF(
     raport: RaportElement,
     token: string
 ) {
-    const { data: pdfFile } = await axios.get("../form.pdf", {
+    const { data: pdfFile } = await axios.get("../form-edited.pdf", {
         responseType: "arraybuffer",
         headers: { "Cache-Control": "no-store" },
     });

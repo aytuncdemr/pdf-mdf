@@ -23,7 +23,7 @@ export default function AddPDFPage() {
         RaportElement[] | null
     >(null);
     const userContext = useContext(UserContext);
-    
+
     async function generateRaportsHandler() {
         try {
             setError(null);
@@ -139,10 +139,9 @@ export default function AddPDFPage() {
                     </button>
 
                     <button
-                        onClick={() => sendRaportsMongoDB()}
+                        onClick={() => sendRaportsMongoDB()}
                         className={`bg-amber-600 hover:bg-amber-700 duration-150 text-white text-lg cursor-pointer py-2 px-6 rounded-lg ${
-                            ( 
-                                isGettingLiveRaports ||
+                            (isGettingLiveRaports ||
                                 isGettingRaports ||
                                 isUpdatingLiveRaports) &&
                             "!bg-gray-500 !cursor-default !pointer-events-none"
@@ -206,7 +205,7 @@ export default function AddPDFPage() {
                                             refundReason: "",
                                             refundExplanation: "",
                                             raportExplanation:
-                                                "Ürün kullanıcıya sorunsuz gönderilmiştir. Üründe hasar olduğundan dolayı tekrar 0 olarak satışa uygun değildir.",
+                                                "Ürün kullanaciya sorunsuz gönderilmiştir. Ürün test edilmiştir herhangi bir sorun bulunamamıştır. Ürün tekrar 0 olarak satışa uygun değildir.",
                                             isTrendyol: true,
                                             isManual: true,
                                         });
@@ -235,7 +234,7 @@ export default function AddPDFPage() {
                                             refundReason: "",
                                             refundExplanation: "",
                                             raportExplanation:
-                                                "Ürün kullanıcıya sorunsuz gönderilmiştir. Üründe hasar olduğundan dolayı tekrar 0 olarak satışa uygun değildir.",
+                                                "Ürün kullanaciya sorunsuz gönderilmiştir. Ürün test edilmiştir herhangi bir sorun bulunamamıştır. Ürün tekrar 0 olarak satışa uygun değildir.",
                                             isTrendyol: false,
                                             isManual: true,
                                         });

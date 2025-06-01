@@ -32,7 +32,7 @@ export default function generateRaportElements(html: string) {
                         row.querySelectorAll(".chakra-link.css-oo0rmg")[0]
                             ?.textContent
                     )
-                ) || "*",
+                ) + " (1 adet)" || "*",
             orderNo:
                 removeExtraSpaces(
                     row.querySelectorAll(".css-12vjdro .css-ei6dok")[0]
@@ -48,7 +48,7 @@ export default function generateRaportElements(html: string) {
                         ?.textContent
                 ) || "*",
             raportExplanation:
-                "Ürün kullanıcıya sorunsuz gönderilmiştir. Üründe hasar olduğundan dolayı tekrar 0 olarak satışa uygun değildir.",
+                "Ürün kullanaciya sorunsuz gönderilmiştir. Ürün test edilmiştir herhangi bir sorun bulunamamıştır. Ürün tekrar 0 olarak satışa uygun değildir.",
             orderDate:
                 removeExtraSpaces(
                     row.querySelectorAll(".css-1mx7c9e")[0]?.textContent
@@ -82,7 +82,7 @@ export default function generateRaportElements(html: string) {
                         row.querySelectorAll(".product-card__content__name")[0]
                             ?.textContent
                     )
-                ) || "*",
+                ) + " (1 adet)" || "*",
             orderNo:
                 removeExtraSpaces(
                     row.querySelectorAll(
@@ -102,7 +102,7 @@ export default function generateRaportElements(html: string) {
                     )[0]?.textContent
                 ) || "*",
             raportExplanation:
-                "Ürün kullanıcıya sorunsuz gönderilmiştir. Üründe hasar olduğundan dolayı tekrar 0 olarak satışa uygun değildir.",
+                "Ürün kullanaciya sorunsuz gönderilmiştir. Ürün test edilmiştir herhangi bir sorun bulunamamıştır. Ürün tekrar 0 olarak satışa uygun değildir.",
             orderDate:
                 removeFirstTwoWords(
                     removeExtraSpaces(
