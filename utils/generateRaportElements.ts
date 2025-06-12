@@ -48,7 +48,7 @@ export default function generateRaportElements(html: string) {
                         ?.textContent
                 ) || "*",
             raportExplanation:
-                "Ürün müşteriye sorunsuz gönderilmiştir. Ürün test edilmiştir herhangi bir sorun bulunamamıştır. Ürün tekrar 0 olarak satışa uygun değildir.",
+                "Ürün müşteriye sorunsuz gönderilmiştir. Mobil uygulamadan kalibrasyon yapıldıktan sonra ürün düzgün çalışmaktadır. Ürün test edilmiştir herhangi bir sorun bulunamamıştır. Ürün tekrar 0 olarak satışa uygun değildir.",
             orderDate:
                 removeExtraSpaces(
                     row.querySelectorAll(".css-1mx7c9e")[0]?.textContent
